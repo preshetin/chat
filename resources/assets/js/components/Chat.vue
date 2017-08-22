@@ -100,6 +100,7 @@
                 console.log(response.data);
                   this.listenForMembers();
                   this.isJoined = true;
+                  this.hasError = false;
               })
               .catch(error => {
                   this.usernameError = _.flatten(_.toArray(error.response.data))[0];
@@ -121,13 +122,11 @@
                   })
                   .joining((user) => {
                       this.members.push(user);
-                      console.log('joining user: ' + user.name);
                   })
                   .leaving((user) => {
                       this.members = this.members.filter( member => {
                         return member.id !== user.id
                       });
-                      console.log('leaving user: ' + user.name);
                   });
             }
         }
