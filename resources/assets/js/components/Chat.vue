@@ -3,6 +3,18 @@
 
       <div class="column is-two-thirds">
 
+      <div class="section" v-if="!isJoined">
+          <div class="field">
+            <div class="control has-icons-left">
+              <input autofocus class="input"  v-bind:class="{'is-danger': hasError }" type="text" placeholder="What's your name?" v-model="username" @keyup.enter="join()">
+              <span class="icon is-small is-left">
+                <i class="fa fa-user"></i>
+              </span>
+            </div>
+            <p class="help is-danger" v-if="usernameError != ''">{{ usernameError }}</p>
+          </div>
+      </div>
+
       <div class="section">
         <ul>
             <li v-for="message in messages">
@@ -14,23 +26,13 @@
       <div class="section">
           <div class="field has-addons" v-if="isJoined">
             <p class="control is-expanded">
-              <input autofocus class="input" type="text" placeholder="Type your message" v-model="body" @keyup.enter="store()">
+              <input autofocus class="input" type="text" v-focus placeholder="Type your message" v-model="body" @keyup.enter="store()">
             </p>
             <p class="control">
               <a class="button is-info" @click="store()">
                 Send
               </a>
             </p>
-          </div>
-
-          <div class="field" v-if="!isJoined">
-            <div class="control has-icons-left">
-              <input autofocus class="input"  v-bind:class="{'is-danger': hasError }" type="text" placeholder="Enter your name" v-model="username" @keyup.enter="join()">
-              <span class="icon is-small is-left">
-                <i class="fa fa-user"></i>
-              </span>
-            </div>
-            <p class="help is-danger" v-if="usernameError != ''">{{ usernameError }}</p>
           </div>
       </div>
 
@@ -57,13 +59,19 @@
 </template>
 
 <script>
+    const focus = {
+        inserted(el) {
+          el.focus()
+        },
+      }
+
     export default {
+
+        directives: { focus },
+
         data() {
             return {
-                messages: [{
-                  body: 'some message',
-                  username: 'petr'
-                }],
+                messages: [],
                 members: [],
                 username: '',
                 hasError: false,
@@ -75,10 +83,18 @@
 
         mounted() {
             this.listenForNewMessage();
+            this.fetchMessages();
+
         },
 
-
         methods: {
+            fetchMessages() {
+                axios.get('/messages')
+                  .then( response => {
+                    this.messages = response.data;
+                  });
+            },
+
             store() {
                 axios.post('/messages', {body: this.body, username: this.username})
                   .then((response) => {
@@ -87,15 +103,8 @@
                   });
             },
 
-            check() {
-              axios.post('auth/check')
-                    .then((response) => {
-                      console.log(response.data);
-                    });
-            },
-
             join() {
-              axios.post('/join', {username: this.username})
+              axios.post('auth/join', {username: this.username})
               .then((response) => {
                 console.log(response.data);
                   this.listenForMembers();

@@ -3,12 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Events\MessageWasCreated;
+use App\Message;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class MessagesController extends Controller
 {
+    /**
+     * List of messages.
+     * 
+     * @return \Illuminate\Support\Collection
+     */
+    public function index()
+    {
+        return Message::orderBy('id', 'desc')->take(2)->get();
+    }
+
     /**
      * Store a newly created resource in storage.
      *

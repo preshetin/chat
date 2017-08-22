@@ -8,6 +8,12 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
+    /**
+     * Log in with new or existing user.
+     * 
+     * @param Request $request
+     * @return array
+     */
     public function join(Request $request)
     {
         $this->validate($request, [
@@ -21,22 +27,6 @@ class AuthController extends Controller
         }
 
         Auth::login($user);
-
-        return ['success' => true];
-    }
-
-    public function check()
-    {
-        if (Auth::check()) {
-            return Auth::user();
-        }
-        
-        return ['success' => false];
-    }
-
-    public function logout()
-    {
-        Auth::logout();
 
         return ['success' => true];
     }
