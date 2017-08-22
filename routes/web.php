@@ -14,3 +14,9 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::post('messages', 'MessagesController@store');
+
+Route::post('join',        'AuthController@join');
+Route::post('auth/check',  'AuthController@check');
+Route::post('auth/logout', 'AuthController@logout');
