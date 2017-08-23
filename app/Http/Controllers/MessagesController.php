@@ -12,12 +12,12 @@ class MessagesController extends Controller
 {
     /**
      * List of messages.
-     * 
+     *
      * @return \Illuminate\Support\Collection
      */
     public function index()
     {
-        return Message::orderBy('id', 'desc')->take(2)->get();
+        return Message::orderBy('id', 'desc')->take(2)->get()->sortBy('id')->values();
     }
 
     /**
