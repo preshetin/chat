@@ -5,10 +5,13 @@
 
       <div class="section" v-if="!isJoined">
           <div class="field">
-            <div class="control has-icons-left">
+            <div class="control has-icons-left has-icons-right">
               <input autofocus class="input"  v-bind:class="{'is-danger': hasError }" type="text" placeholder="What's your name?" v-model="username" @keyup.enter="join()">
               <span class="icon is-small is-left">
                 <i class="fa fa-user"></i>
+              </span>
+              <span class="icon is-small is-right" v-if="isLoading">
+                <i class="fa fa-refresh fa-spin fa-3x fa-fw"></i>
               </span>
             </div>
             <p class="help is-danger" v-if="usernameError != ''">{{ usernameError }}</p>
@@ -74,6 +77,7 @@
                 messages: [],
                 members: [],
                 username: '',
+                isLoading: false,
                 hasError: false,
                 usernameError: '',
                 isJoined: false,
@@ -104,14 +108,16 @@
             },
 
             join() {
+              this.isLoading = true;
               axios.post('auth/join', {username: this.username})
               .then((response) => {
-                console.log(response.data);
+                  this.isLoading = false;
                   this.listenForMembers();
                   this.isJoined = true;
                   this.hasError = false;
               })
               .catch(error => {
+                  this.isLoading = false;
                   this.usernameError = _.flatten(_.toArray(error.response.data))[0];
                   this.hasError = true;
               });
